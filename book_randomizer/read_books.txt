@@ -1,6 +1,0 @@
-boop
-recursion
-app
-soylent
-hello
-cats

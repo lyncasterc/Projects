@@ -12,24 +12,7 @@ import sys
                 #delete book 
                 # mark as read or unread, depending on where the book is
 
-# randomly choose pick from unread "list" to read
 
-# def replace_line(file,old_line,new_line):
-#             f = open(file,'r')
-#             data = f.read()
-#             f.close()
-
-#             new_data = data.replace(old_line,new_line)
-
-#             f = open(file,'w')
-#             f.write(new_data)
-#             f.close
-
-#         old_password = input('Enter current password: ')
-#         while old_password!=self.password:
-#             print('The password you entered is incorrect.\n')
-
-#             old_password = input('Please try again: ')
 
 UNREAD_FILE = "unread_books.txt"
 READ_FILE = "read_books.txt"
@@ -61,6 +44,14 @@ class Book:
                     pass
             return False
     
+    @classmethod
+    def get_random_book(cls):
+        with open(UNREAD_FILE,'r') as f:
+            lines = f.readlines()
+        random.shuffle(lines)
+        random_book = random.choice(lines)
+        return random_book
+
 
     def remove_book(self,file_name):
         with open(file_name,'r') as f:
@@ -71,10 +62,6 @@ class Book:
                 if line != self.title+'\n':
                     f.write(line)
         
-
-
-
-
 
     def add_to_unread(self):
         with open(UNREAD_FILE,'a') as f:
@@ -169,11 +156,18 @@ def view_books():
             while choice!= '1' and choice!= '2' and choice!= '3':
                 print('Invalid input. Try again.\n')
                 choice = input('Enter choice: ')
-            
+            #move to read
             if choice =='1':
                 book.remove_book(UNREAD_FILE)
                 book.add_to_read()
-                #add line to go back
+                print(f'"{book.title}" moved to read books list. ')
+                view_books()
+
+            #delete
+            elif choice == '2':
+                book.remove_book(UNREAD_FILE)
+                print(f'"{book.title}" deleted.')
+                view_books()
             
 
     #view read
@@ -200,25 +194,35 @@ def view_books():
             while choice!= '1' and choice!= '2' and choice!= '3':
                 print('Invalid input. Try again.\n')
                 choice = input('Enter choice: ')
-            
+            #move to unread
             if choice =='1':
                 book.remove_book(READ_FILE)
                 book.add_to_unread()
+                print(f'"{book.title}" moved to unread books list. ')
+                view_books()
+
+            #delete
+            elif choice == '2':
+                book.remove_book(READ_FILE)
+                print(f'"{book.title}" deleted.')
+                view_books()
 
     #go back to start
     elif choice == '3':
         start()
+
+def random_book():
+    choice = input('Enter 1 to recieve a random book suggestion or 2 to go back: ')
+    while choice != '1' and choice != '2':
+        print('Invalid input.\n')
+        choice = input('Enter 1 to recieve a random book suggestion or 2 to go back: ')
+    if choice == '1':
+        random_book = Book.get_random_book()
+        print(f'Your random book suggestion is {random_book}!')
+        start()
+    if choice == '2':
+        start()
     
-
-
-
-
-
-
-
-
-
-
 
 
 def start():
@@ -233,17 +237,19 @@ def start():
     #Add book
     if choice == '1':
         add_books()
-    
 
-    if choice == '4':
+    # View books
+    elif choice == '2':
+        view_books()
+
+    # random book suggestion
+    elif choice =='3':
+        random_book()
+
+    #quit program
+    elif choice == '4':
         print('Exiting program...')
         sys.exit()
-        
-        
-    
-    # View books
-    if choice == '2':
-        view_books()
 
 
 
